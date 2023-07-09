@@ -3,6 +3,7 @@ if not lib then return end
 local shopTypes = {}
 local shops = {}
 local createBlip = require 'modules.utils.client'.CreateBlip
+shared.target = false
 
 for shopType, shopData in pairs(data('shops') --[[@as table<string, OxShop>]]) do
 	local shop = {

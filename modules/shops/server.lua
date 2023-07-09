@@ -268,9 +268,14 @@ lib.callback.register('ox_inventory:buyItem', function(source, data)
 
 				local message = locale('purchased_for', count, fromItem.label, (currency == 'money' and locale('$') or comma_value(price)), (currency == 'money' and comma_value(price) or ' '..Items(currency).label))
 
+				local itemserial = nil
+				if metadata ~= nil then
+					itemserial = metadata.serial
+				end
+
 				if server.loglevel > 0 then
 					if server.loglevel > 1 or fromData.price >= 500 then
-						lib.logger(playerInv.owner, 'buyItem', ('"%s" %s'):format(playerInv.label, message:lower()), ('shop:%s'):format(shop.label))
+						lib.logger(playerInv.owner, 'buyItem', ('"%s" %s'):format(playerInv.label, message:lower()), ('shop:%s'):format(shop.label), ('serial:%s'):format(itemserial))
 					end
 				end
 

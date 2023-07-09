@@ -932,9 +932,12 @@ function Inventory.AddItem(inv, item, count, metadata, slot, cb)
 			if server.syncInventory then server.syncInventory(inv) end
 			TriggerClientEvent('ox_inventory:updateSlots', inv.id, {{ item = inv.items[toSlot], inventory = inv.type }}, { left = inv.weight, right = inv.open and Inventories[inv.open]?.weight }, slotCount, false)
 		end
-
+		local itemserial = nil
+		if item.metadata ~= nil then
+			itemserial = item.metadata.serial
+		end
 		if invokingResource then
-			lib.logger(inv.owner, 'addItem', ('"%s" added %sx %s to "%s"'):format(invokingResource, count, item.name, inv.label))
+			lib.logger(inv.owner, 'addItem', ('"%s" added %sx %s to "%s"'):format(invokingResource, count, item.name, inv.label), ('serial:%s'):format(itemserial))
 		end
 
 		success = true
@@ -953,9 +956,12 @@ function Inventory.AddItem(inv, item, count, metadata, slot, cb)
 			if server.syncInventory then server.syncInventory(inv) end
 			TriggerClientEvent('ox_inventory:updateSlots', inv.id, toSlot, { left = inv.weight, right = inv.open and Inventories[inv.open]?.weight }, added, false)
 		end
-
+		local itemserial = nil
+		if item.metadata ~= nil then
+			itemserial = item.metadata.serial
+		end
 		if invokingResource then
-			lib.logger(inv.owner, 'addItem', ('"%s" added %sx %s to "%s"'):format(invokingResource, added, item.name, inv.label))
+			lib.logger(inv.owner, 'addItem', ('"%s" added %sx %s to "%s"'):format(invokingResource, added, item.name, inv.label), ('serial:%s'):format(itemserial))
 		end
 
 		for i = 1, #toSlot do
@@ -1134,9 +1140,13 @@ function Inventory.RemoveItem(inv, item, count, metadata, slot, ignoreTotal)
 				TriggerClientEvent('ox_inventory:updateSlots', inv.id, array, {left=inv.weight, right=inv.open and Inventories[inv.open]?.weight}, removed, true)
 
 				local invokingResource = server.loglevel > 1 and GetInvokingResource()
-
+				
+				local itemserial = nil
+				if item.metadata ~= nil then
+					itemserial = item.metadata.serial
+				end
 				if invokingResource then
-					lib.logger(inv.owner, 'removeItem', ('"%s" removed %sx %s from "%s"'):format(invokingResource, removed, item.name, inv.label))
+					lib.logger(inv.owner, 'removeItem', ('"%s" removed %sx %s from "%s"'):format(invokingResource, removed, item.name, inv.label), ('serial:%s'):format(itemserial))
 				end
 			end
 
@@ -1342,8 +1352,12 @@ local function dropItem(source, data)
 
 	TriggerClientEvent('ox_inventory:createDrop', -1, dropId, Inventory.Drops[dropId], playerInventory.open and source, slot)
 
+	local itemserial = nil
+	if toData.metadata ~= nil then
+		itemserial = toData.metadata.serial
+	end
 	if server.loglevel > 0 then
-		lib.logger(playerInventory.owner, 'swapSlots', ('%sx %s transferred from "%s" to "%s"'):format(data.count, toData.name, playerInventory.label, dropId))
+		lib.logger(playerInventory.owner, 'swapSlots', ('%sx %s transferred from "%s" to "%s"'):format(data.count, toData.name, playerInventory.label, dropId), ('serial:%s'):format(itemserial))
 	end
 
 	if server.syncInventory then server.syncInventory(playerInventory) end
@@ -1438,8 +1452,12 @@ lib.callback.register('ox_inventory:swapItems', function(source, data)
 
 								toData, fromData = Inventory.SwapSlots(fromInventory, toInventory, data.fromSlot, data.toSlot) --[[@as table]]
 
+								local itemserial = nil
+								if toData.metadata ~= nil then
+									itemserial = toData.metadata.serial
+								end
 								if server.loglevel > 0 then
-									lib.logger(playerInventory.owner, 'swapSlots', ('%sx %s transferred from "%s" to "%s" for %sx %s'):format(fromData.count, fromData.name, fromInventory.owner and fromInventory.label or fromInventory.id, toInventory.owner and toInventory.label or toInventory.id, toData.count, toData.name))
+									lib.logger(playerInventory.owner, 'swapSlots', ('%sx %s transferred from "%s" to "%s" for %sx %s'):format(fromData.count, fromData.name, fromInventory.owner and fromInventory.label or fromInventory.id, toInventory.owner and toInventory.label or toInventory.id, toData.count, toData.name), ('serial:%s'):format(itemserial), ('fromIdentifier:%s'):format(fromInventory.owner), ('toIdentifier:%s'):format(toInventory.owner))
 								end
 							else return false, 'cannot_carry' end
 						else
@@ -1481,8 +1499,12 @@ lib.callback.register('ox_inventory:swapItems', function(source, data)
 									TriggerClientEvent('ox_inventory:itemNotify', toInventory.id, { toData, 'ui_added', data.count })
 								end
 
+								local itemserial = nil
+								if toData.metadata ~= nil then
+									itemserial = toData.metadata.serial
+								end
 								if server.loglevel > 0 then
-									lib.logger(playerInventory.owner, 'swapSlots', ('%sx %s transferred from "%s" to "%s"'):format(data.count, fromData.name, fromInventory.owner and fromInventory.label or fromInventory.id, toInventory.owner and toInventory.label or toInventory.id))
+									lib.logger(playerInventory.owner, 'swapSlots', ('%sx %s transferred from "%s" to "%s"'):format(data.count, fromData.name, fromInventory.owner and fromInventory.label or fromInventory.id, toInventory.owner and toInventory.label or toInventory.id), ('serial:%s'):format(itemserial), ('fromIdentifier:%s'):format(fromInventory.owner), ('toIdentifier:%s'):format(toInventory.owner))
 								end
 							end
 
@@ -1531,8 +1553,12 @@ lib.callback.register('ox_inventory:swapItems', function(source, data)
 									TriggerClientEvent('ox_inventory:itemNotify', toInventory.id, { fromData, 'ui_added', data.count })
 								end
 
+								local itemserial = nil
+								if toData.metadata ~= nil then
+									itemserial = toData.metadata.serial
+								end
 								if server.loglevel > 0 then
-									lib.logger(playerInventory.owner, 'swapSlots', ('%sx %s transferred from "%s" to "%s"'):format(data.count, fromData.name, fromInventory.owner and fromInventory.label or fromInventory.id, toInventory.owner and toInventory.label or toInventory.id))
+									lib.logger(playerInventory.owner, 'swapSlots', ('%sx %s transferred from "%s" to "%s"'):format(data.count, fromData.name, fromInventory.owner and fromInventory.label or fromInventory.id, toInventory.owner and toInventory.label or toInventory.id), ('serial:%s'):format(itemserial), ('fromIdentifier:%s'):format(fromInventory.owner), ('toIdentifier:%s'):format(toInventory.owner))
 								end
 							end
 
@@ -1912,8 +1938,13 @@ RegisterServerEvent('ox_inventory:giveItem', function(slot, target, count)
 			Inventory.RemoveItem(fromInventory, item, count, data.metadata, slot)
 			Inventory.AddItem(toInventory, item, count, data.metadata)
 
+			local itemserial = nil
+			if data.metadata ~= nil then
+				itemserial = data.metadata.serial
+			end
+
 			if server.loglevel > 0 then
-				lib.logger(fromInventory.owner, 'giveItem', ('"%s" gave %sx %s to "%s"'):format(fromInventory.label, count, data.name, toInventory.label))
+				lib.logger(fromInventory.owner, 'giveItem', ('"%s" gave %sx %s to "%s"'):format(fromInventory.label, count, data.name, toInventory.label), ('serial:%s'):format(itemserial))
 			end
 		else
 			TriggerClientEvent('ox_lib:notify', fromInventory.id, { type = 'error', description = locale('cannot_give', count, data.label) })

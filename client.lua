@@ -713,8 +713,12 @@ local function registerCommands()
 				vehBone = GetEntityBoneIndexByName(entity, Vehicles.trunk.boneIndex[vehicleHash] or 'platelight')
 			end
 
-			position = GetWorldPositionOfEntityBone(entity, vehBone)
-
+			if vehBone == -1 then
+				vehBone = GetEntityBoneIndexByName(entity, 'exhaust')
+				position = GetWorldPositionOfEntityBone(entity, vehBone)
+			else
+				position = GetWorldPositionOfEntityBone(entity, vehBone)
+			end
 			if #(playerCoords - position) < 2 and door then
 				local plate = GetVehicleNumberPlateText(entity)
 				local invId = 'trunk'..plate
@@ -763,10 +767,23 @@ local function registerCommands()
 
 			if currentWeapon.ammo then
 				if currentWeapon.metadata.durability > 0 then
-					local ammo = Inventory.Search(1, currentWeapon.ammo, { type = currentWeapon.metadata.specialAmmo })?[1]
-
-					if ammo then
-						useSlot(ammo.slot)
+					local ammo = Inventory.Search(1, currentWeapon.ammo, { type = currentWeapon.metadata.specialAmmo }, metadata)?[1]
+					local grouppol = client.hasGroup("police")
+					local groupkmar = client.hasGroup("kmar")
+					if ammo ~= nil and ammo.metadata.serial == "POL" and (grouppol or groupkmar) then
+						if ammo then
+							useSlot(ammo.slot)
+						end
+					elseif ammo ~= nil and ammo.metadata.serial == "POL" then
+						lib.notify({
+							title = 'Ongeauthorizeerde ammo',
+							description = 'Je mag dit niet gebruiken! Dit is mogelijk van een overheidsdienst!',
+							type = 'error'
+						})
+					elseif ammo ~= nil then
+						if ammo then
+							useSlot(ammo.slot)
+						end
 					end
 				else
 					lib.notify({ id = 'no_durability', type = 'error', description = locale('no_durability', currentWeapon.label) })

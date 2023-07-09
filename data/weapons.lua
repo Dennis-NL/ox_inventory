@@ -565,7 +565,7 @@ return {
 		['WEAPON_SMG'] = {
 			label = 'SMG',
 			weight = 3084,
-			durability = 0.8,
+			durability = 0.08,
 			ammoname = 'ammo-9'
 		},
 
@@ -790,7 +790,7 @@ return {
 					`COMPONENT_PISTOL50_CLIP_02`,
 					`COMPONENT_SNSPISTOL_CLIP_02`,
 					`COMPONENT_SNSPISTOL_MK2_CLIP_02`,
-					`COMPONENT_VINTAGEPISTOL_CLIP_02`,
+					`COMPONENT_VINTAGEPISTOL_CLIP_02`
 				},
 				usetime = 2500
 			}

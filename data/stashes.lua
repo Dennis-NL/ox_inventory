@@ -13,22 +13,98 @@
 
 return {
 	{
-		coords = vec3(452.3, -991.4, 30.7),
+		coords = vec3(-1103.76, -820.82, 14.266),
 		target = {
-			loc = vec3(451.25, -994.28, 30.69),
+			loc = vec3(-1103.76, -820.82, 14.266),
 			length = 1.2,
 			width = 5.6,
 			heading = 0,
 			minZ = 29.49,
 			maxZ = 32.09,
-			label = 'Open personal locker'
+			label = 'Persoonlijke kluis'
 		},
 		name = 'policelocker',
-		label = 'Personal locker',
+		label = 'Persoonlijke kluis',
 		owner = true,
 		slots = 70,
-		weight = 70000,
-		groups = shared.police
+		weight = 300000,
+		groups = {['police'] = 1}
+	},
+	
+	{
+		coords = vec3(2524.16, -340.60, 101.88),
+		target = {
+			loc = vec3(2524.16, -340.60, 101.88),
+			length = 1.2,
+			width = 5.6,
+			heading = 0,
+			minZ = 29.49,
+			maxZ = 32.09,
+			label = 'Persoonlijke kluis'
+		},
+		name = 'kmarlocker',
+		label = 'Persoonlijke kluis',
+		owner = true,
+		slots = 70,
+		weight = 300000,
+		groups = {['kmar'] = 1}
+	},
+	
+	{
+		coords = vec3(1862.36, 3689.88, 34.21),
+		target = {
+			loc = vec3(1862.36, 3689.88, 34.21),
+			length = 1.2,
+			width = 5.6,
+			heading = 0,
+			minZ = 29.49,
+			maxZ = 32.09,
+			label = 'Persoonlijke kluis'
+		},
+		name = 'kmarlocker2',
+		label = 'Persoonlijke kluis',
+		owner = true,
+		slots = 70,
+		weight = 300000,
+		groups = {['kmar'] = 1}
+	},
+	
+	{
+		coords = vec3(-2357.18, 3256.16, 32.80),
+		target = {
+			loc = vec3(-2357.18, 3256.16, 32.80),
+			length = 1.2,
+			width = 5.6,
+			heading = 0,
+			minZ = 29.49,
+			maxZ = 32.09,
+			label = 'Persoonlijke kluis'
+		},
+		name = 'kmarlocker3',
+		label = 'Persoonlijke kluis',
+		owner = true,
+		slots = 70,
+		weight = 300000,
+		groups = {['kmar'] = 1}
+	},
+	
+	{
+		coords = vec3(563.67, -3126.47, 18.76),
+		target = {
+			loc = vec3(563.67, -3126.47, 18.76),
+			length = 1.2,
+			width = 5.6,
+			heading = 0,
+			minZ = 29.49,
+			maxZ = 32.09,
+			label = 'Persoonlijke kluis'
+		},
+		name = 'kmarlocker4',
+		label = 'Persoonlijke kluis',
+		owner = true,
+		slots = 70,
+		weight = 300000,
+		groups = {['kmar'] = 1}
 	},
 
 	{

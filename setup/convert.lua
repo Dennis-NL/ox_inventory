@@ -95,7 +95,7 @@ local function ConvertESX()
 		local inventory, slot = {}, 0
 		local items = users[i].inventory and json.decode(users[i].inventory) or {}
 		local accounts = users[i].accounts and json.decode(users[i].accounts) or {}
-		local loadout = users[i].loadout and json.decode(users[i].loadout) or {}
+		--local loadout = users[i].loadout and json.decode(users[i].loadout) or {}
 
 		for k, v in pairs(accounts) do
 			if type(v) == 'table' then break end
@@ -105,7 +105,7 @@ local function ConvertESX()
 			end
 		end
 
-		for k in pairs(loadout) do
+		--[[for k in pairs(loadout) do
 			local item = Items(k)
 			if item then
 				slot += 1
@@ -116,7 +116,7 @@ local function ConvertESX()
 					inventory[slot].metadata.serial = GenerateSerial()
 				end
 			end
-		end
+		end]]
 
 		for k, v in pairs(items) do
 			if type(v) == 'table' then break end
@@ -131,6 +131,65 @@ local function ConvertESX()
 
 	MySQL.prepare.await('UPDATE users SET inventory = ? WHERE identifier = ?', parameters)
 	Print('Successfully converted user inventories')
+	
+	-- selecteer alle items uit de trunk_inventory tabel
+	local result = MySQL.Sync.fetchAll("SELECT * FROM trunk_inventory")
+	Print(('Converting %s trunk inventories to new data format'):format(#result))
+
+	-- loop door de resultaten en zet de gegevens om naar het nieuwe formaat
+	for i=1, #result, 1 do
+	    local data = json.decode(result[i].data)
+	    if data ~= nil and data.coffre ~= nil then
+	        local new_data = {}
+	        for j=1, #data.coffre, 1 do
+	            local item = {
+	                name = data.coffre[j].name,
+	                slot = j,
+	                count = data.coffre[j].count
+	            }
+				if item.count ~= 0 then
+					table.insert(new_data, item)
+				end
+	        end
+	        -- voeg black_money en money items toe
+	        if data.black_money ~= nil then
+	            local item = {
+	                name = "black_money",
+	                slot = #new_data + 1,
+	                count = data.black_money[1].amount
+	            }
+	            if item.count ~= 0 then
+					table.insert(new_data, item)
+				end
+	        end
+	        if data.money ~= nil then
+	            local item = {
+	                name = "money",
+	                slot = #new_data + 1,
+	                count = data.money[1].amount
+	            }
+	            if item.count ~= 0 then
+					table.insert(new_data, item)
+				end
+	        end
+	        result[i].new_data = json.encode(new_data)
+	    else
+	        result[i].new_data = nil
+	    end
+	end
+
+-- kopieer de gegevens naar de owned_vehicles tabel
+for i=1, #result, 1 do
+    if result[i].new_data ~= nil then
+        MySQL.Async.execute('UPDATE owned_vehicles SET trunk = @trunk WHERE plate = @plate', {
+            ['@trunk'] = result[i].new_data,
+            ['@plate'] = result[i].plate
+        })
+    end
+end
+
+
+Print('Successfully converted trunk inventories')
 	started = false
 end
 

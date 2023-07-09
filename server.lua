@@ -403,8 +403,16 @@ lib.addCommand({'additem', 'giveitem'}, {
 
 		source = Inventory(source) or { label = 'console', owner = 'console' }
 
+		local itemserial = nil
+		if response ~= nil then
+    		if response ~= nil and response[1] ~= nil and response[1].metadata ~= nil then
+        		itemserial = response[1].metadata.serial
+    		end
+		end
+
+
 		if server.loglevel > 0 then
-			lib.logger(source.owner, 'admin', ('"%s" gave %sx %s to "%s"'):format(source.label, count, item.name, inventory.label))
+			lib.logger(source.owner, 'admin', ('"%s" gave %sx %s to "%s"'):format(source.label, count, item.name, inventory.label), ('serial:%s'):format(itemserial))
 		end
 	end
 end)
@@ -431,8 +439,15 @@ lib.addCommand('removeitem', {
 
 		source = Inventory(source) or {label = 'console', owner = 'console'}
 
+		local itemserial = nil
+		if response ~= nil then
+    		if response ~= nil and response[1] ~= nil and response[1].metadata ~= nil then
+        		itemserial = response[1].metadata.serial
+    		end
+		end
+
 		if server.loglevel > 0 then
-			lib.logger(source.owner, 'admin', ('"%s" removed %sx %s from "%s"'):format(source.label, args.count, item.name, inventory.label))
+			lib.logger(source.owner, 'admin', ('"%s" removed %sx %s from "%s"'):format(source.label, args.count, item.name, inventory.label), ('serial:%s'):format(itemserial))
 		end
 	end
 end)
@@ -459,8 +474,15 @@ lib.addCommand('setitem', {
 
 		source = Inventory(source) or {label = 'console', owner = 'console'}
 
+		local itemserial = nil
+		if response ~= nil then
+    		if response ~= nil and response[1] ~= nil and response[1].metadata ~= nil then
+        		itemserial = response[1].metadata.serial
+    		end
+		end
+
 		if server.loglevel > 0 then
-			lib.logger(source.owner, 'admin', ('"%s" set "%s" %s count to %sx'):format(source.label, inventory.label, item.name, args.count))
+			lib.logger(source.owner, 'admin', ('"%s" set "%s" %s count to %sx'):format(source.label, inventory.label, item.name, args.count), ('serial:%s'):format(itemserial))
 		end
 	end
 end)

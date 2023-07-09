@@ -23,7 +23,7 @@ shared_script '@ox_lib/init.lua'
 
 server_scripts {
 	'@oxmysql/lib/MySQL.lua',
-	'modules/init.lua'
+	'modules/init.lua',
 }
 
 client_script 'modules/init.lua'
