@@ -7,14 +7,26 @@
 ---@field description? string Text to display in the item tooltip.
 ---@field consume? number Number of items to remove on use.<br>Using a value under 1 will remove durability, if the item cannot be stacked.
 ---@field degrade? number Amount of time for the item durability to degrade to 0, in minutes.
+---@field decay? boolean Remove the item at 0 durability. Not triggered immediately.
 ---@field stack? boolean Set to false to prevent the item from stacking.
 ---@field close? boolean Set to false to keep the inventory open on item use.
 ---@field allowArmed? boolean Set to true to allow an item to be used while a weapon is equipped.
----@field buttons? { label: string, action: fun(slot: number) }[] Add interactions when right-clicking an item.
+---@field buttons? { label: string, group: string, action: fun(slot: number) }[] Add interactions when right-clicking an item.
 ---@field [string] any
 
+---@class SlotWithItem
+---@field name string
+---@field label string
+---@field weight number
+---@field slot number
+---@field count number
+---@field metadata { [string]: any }
+---@field description? string
+---@field stack? boolean
+---@field close? boolean
+
 ---@class OxClientProps
----@field status? { [string]: number }
+---@field status? table<string, number>
 ---@field anim? string | { dict?: string, clip: string, flag?: number, blendIn?: number, blendOut?: number, duration?: number, playbackRate?: number, lockX?: boolean, lockY?: boolean, lockZ?: boolean, scenario?: string, playEnter?: boolean }
 ---@field prop? string | ProgressPropProps
 ---@field usetime? number
@@ -90,7 +102,7 @@ local function newItem(data)
 		end
 
 		if clientData?.image then
-			clientData.image = clientData.image:match('^[%w]+://') and ('url(%s)'):format(clientData.image) or ('url(%s/%s)'):format(client.imagepath, clientData.image)
+			clientData.image = clientData.image:match('^[%w]+://') and clientData.image or ('%s/%s'):format(client.imagepath, clientData.image)
 		end
 	end
 
