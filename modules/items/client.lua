@@ -1,6 +1,6 @@
 if not lib then return end
 
-local Items = require 'modules.items.shared' --[[@as table<string, OxClientItem>]]
+local Items = require 'modules.items.shared' --[[@as { [string]: OxClientItem }]]
 
 local function displayMetadata(metadata, value)
 	local data = metadata
@@ -12,29 +12,14 @@ local function displayMetadata(metadata, value)
 end
 exports('displayMetadata', displayMetadata)
 
----@param _ table?
----@param name string?
----@return table?
-local function getItem(_, name)
-    if not name then return Items end
-
-	if type(name) ~= 'string' then return end
-
-    name = name:lower()
-
-    if name:sub(0, 7) == 'weapon_' then
-        name = name:upper()
-    end
-
-    return Items[name]
+local function GetItem(item)
+	if item then
+		item = string.lower(item)
+		if item:sub(0, 7) == 'weapon_' then item = string.upper(item) end
+		return Items[item]
+	end
+	return Items
 end
-
-setmetatable(Items --[[@as table]], {
-	__call = getItem
-})
-
----@cast Items +fun(itemName: string): OxClientItem
----@cast Items +fun(): table<string, OxClientItem>
 
 local function Item(name, cb)
 	local item = Items[name]
@@ -150,7 +135,7 @@ end)
 
 -----------------------------------------------------------------------------------------------
 
-exports('Items', function(item) return getItem(nil, item) end)
-exports('ItemList', function(item) return getItem(nil, item) end)
+exports('Items', GetItem)
+exports('ItemList', GetItem)
 
 return Items

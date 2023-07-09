@@ -35,7 +35,7 @@ local function TriggerEventHooks(event, payload)
     local hooks = eventHooks[event]
 
     if hooks then
-		local fromInventory = payload.fromInventory and tostring(payload.fromInventory) or payload.inventoryId and tostring(payload.inventoryId) or payload.shopType and tostring(payload.shopType)
+		local fromInventory = payload.fromInventory and tostring(payload.fromInventory) or payload.inventoryId and tostring(payload.inventoryId)
 		local toInventory = payload.toInventory and tostring(payload.toInventory)
 
         for i = 1, #hooks do
@@ -113,7 +113,7 @@ local function removeResourceHooks(resource, id)
         for i = #hooks, 1, -1 do
 			local hook = hooks[i]
 
-            if hook.resource == resource and (not id or hook.hookId == id) then
+            if hook.resource == resource and (not id or hook.id == id) then
                 table.remove(hooks, i)
             end
         end

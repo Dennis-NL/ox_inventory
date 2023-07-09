@@ -1,16 +1,7 @@
-local function addDeferral(err)
-    err = err:gsub("%^%d", "")
+lib.locale()
 
-    AddEventHandler('playerConnecting', function(_, _, deferrals)
-        deferrals.defer()
-        deferrals.done(err)
-    end)
-end
-
--- Do not modify this file at all. This isn't a "config" file. You want to change
--- resource settings? Use convars like you were told in the documentation.
--- You did read the docs, right? Probably not, if you're here.
--- https://overextended.dev/ox_inventory#config
+-- Don't be an idiot and change these convar getters (yes, people do that).
+-- https://overextended.github.io/docs/ox_inventory/Getting%20Started/config
 
 shared = {
 	resource = GetCurrentResourceName(),
@@ -62,13 +53,6 @@ if IsDuplicityVersion() then
 			]
 		]])),
 	}
-
-    local accounts = json.decode(GetConvar('inventory:accounts', '["money"]'))
-    server.accounts = table.create(0, #accounts)
-
-    for i = 1, #accounts do
-        server.accounts[accounts[i]] = 0
-    end
 else
 	PlayerData = {}
 	client = {
@@ -82,10 +66,8 @@ else
 		itemnotify = GetConvarInt('inventory:itemnotify', 1) == 1,
 		imagepath = GetConvar('inventory:imagepath', 'nui://ox_inventory/web/images'),
 		dropprops = GetConvarInt('inventory:dropprops', 0) == 1,
-		dropmodel = joaat(GetConvar('inventory:dropmodel', 'prop_med_bag_01b')),
 		weaponmismatch = GetConvarInt('inventory:weaponmismatch', 1) == 1,
-		ignoreweapons = json.decode(GetConvar('inventory:ignoreweapons', '[]')),
-		suppresspickups = GetConvarInt('inventory:suppresspickups', 1) == 1,
+		ignoreweapons = json.decode(GetConvar('inventory:ignoreweapons', '[]'))
 	}
 
 	local ignoreweapons = table.create(0, (client.ignoreweapons and #client.ignoreweapons or 0) + 3)
@@ -119,18 +101,16 @@ end
 
 -- People like ignoring errors for some reason
 local function spamError(err)
+	lib = nil
 	shared.ready = false
-
 	CreateThread(function()
 		while true do
-			Wait(10000)
+			Wait(2000)
 			CreateThread(function()
 				error(err, 0)
 			end)
 		end
 	end)
-
-    addDeferral(err)
 	error(err, 0)
 end
 
@@ -179,18 +159,16 @@ if not lib then
 	return spamError('ox_inventory requires the ox_lib resource, refer to the documentation.')
 end
 
-lib.locale()
-
-local success, msg = lib.checkDependency('oxmysql', '2.7.2')
+local success, msg = lib.checkDependency('oxmysql', '2.4.0')
 
 if not success then return spamError(msg) end
 
-success, msg = lib.checkDependency('ox_lib', '3.2.0')
+success, msg = lib.checkDependency('ox_lib', '3.0.0')
 
 if not success then spamError(msg) end
 
 if not LoadResourceFile(shared.resource, 'web/build/index.html') then
-	return spamError('UI has not been built, refer to the documentation or download a release build.\n	^3https://overextended.dev/ox_inventory^0')
+	return spamError('UI has not been built, refer to the documentation or download a release build.\n	^3https://overextended.github.io/docs/ox_inventory/^0')
 end
 
 if shared.target then
